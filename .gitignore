@@ -1,0 +1,5 @@
+dist/
+.wrangler/
+.sites-runtime/
+node_modules/
+local.sqlite*
