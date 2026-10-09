@@ -1,0 +1,13 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
+const path = resolve(root, "dist/server/index.js");
+const source = await readFile(path, "utf8");
+const manifest = JSON.parse(await readFile(resolve(root, "dist/.openai/hosting.json"), "utf8"));
+assert.equal(manifest.project_id, "appgprj_6ac860723fa081918ddfc5caa0bbfbaf");
+assert.equal(manifest.d1, "DB");
+const imported = await import("data:text/javascript;base64," + Buffer.from(source).toString("base64"));
+assert.equal(typeof imported.default?.fetch, "function", pathToFileURL(path).href + " must export default.fetch");
+console.log("Artifact is valid ESM and exports default.fetch.");
